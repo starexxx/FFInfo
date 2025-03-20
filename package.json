@@ -1,0 +1,16 @@
+{
+  "name": "player-info-api",
+  "version": "1.0.0",
+  "description": "API to fetch player information",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "crypto": "^1.0.1",
+    "protobuf-decoder": "^0.1.0",
+    "luxon": "^3.4.4"
+  }
+}

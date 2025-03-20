@@ -87,12 +87,23 @@ const parseResults = (parsedResults) => {
 };
 
 const getAvailableRoom = (inputText) => {
-    const parsedResults = new Parser().parse(inputText);
+    const parser = new Parser();
+    const parsedResults = parser.parse(inputText);
     const parsedResultsDict = parseResults(parsedResults);
     return JSON.stringify(parsedResultsDict);
 };
 
-app.get('/info', async (req, res) => {
+app.get('/', (req, res) => {
+    res.json({
+        "FF Information": [
+            {
+                "credits": "Starexx"
+            }
+        ]
+    });
+});
+
+app.get('/api/player-info', async (req, res) => {
     try {
         const playerId = req.query.id;
         if (!playerId) {

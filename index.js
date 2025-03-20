@@ -107,7 +107,7 @@ app.get('/', (req, res) => {
     });
 });
 
-app.get('/api/player-info', async (req, res) => {
+app.get('/info', async (req, res) => {
     try {
         const playerId = req.query.id;
         if (!playerId) {

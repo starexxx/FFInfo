@@ -7,14 +7,14 @@ const { DateTime } = require('luxon');
 const app = express();
 app.use(express.json());
 
-const DEFAULT_UID = "3197059560";
-const DEFAULT_PASS = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734";
-const JWT_GEN_URL = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token";
+const com_garena_msdk_uid = "3197059560";
+const com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734";
+const get_jwt = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token";
 
 const getJwt = async () => {
     try {
-        const params = { uid: DEFAULT_UID, password: DEFAULT_PASS };
-        const response = await axios.get(JWT_GEN_URL, { params });
+        const params = { uid: com_garena_msdk_uid, password: com_garena_msdk_password };
+        const response = await axios.get(get_jwt, { params });
         if (response.status === 200) {
             return response.data["JWT TOKEN"];
         }

@@ -92,7 +92,7 @@ const getAvailableRoom = (inputText) => {
     return JSON.stringify(parsedResultsDict);
 };
 
-app.get('/api/player-info', async (req, res) => {
+app.get('/info', async (req, res) => {
     try {
         const playerId = req.query.id;
         if (!playerId) {

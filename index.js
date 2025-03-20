@@ -7,8 +7,8 @@ const { DateTime } = require('luxon');
 const app = express();
 app.use(express.json());
 
-const DEFAULT_UID = "3230720086";
-const DEFAULT_PASS = "0F0B641EEF3F776F2F1680B80A46C8E603A92C7F127037A025A224FA23A4BBD1";
+const DEFAULT_UID = "3197059560";
+const DEFAULT_PASS = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734";
 const JWT_GEN_URL = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token";
 
 const getJwt = async () => {
@@ -87,10 +87,14 @@ const parseResults = (parsedResults) => {
 };
 
 const getAvailableRoom = (inputText) => {
-    const parser = new Parser();
-    const parsedResults = parser.parse(inputText);
-    const parsedResultsDict = parseResults(parsedResults);
-    return JSON.stringify(parsedResultsDict);
+    try {
+        const parser = new Parser();
+        const parsedResults = parser.parse(inputText);
+        const parsedResultsDict = parseResults(parsedResults);
+        return JSON.stringify(parsedResultsDict);
+    } catch (error) {
+        throw new Error(`Parser error: ${error.message}`);
+    }
 };
 
 app.get('/', (req, res) => {
@@ -108,20 +112,22 @@ app.get('/api/player-info', async (req, res) => {
         const playerId = req.query.id;
         if (!playerId) {
             return res.status(400).json({
-                status: "error",
-                message: "Player ID is required",
-                credits: "Starexx",
-                timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
+                "Error": [
+                    {
+                        "message": "Player ID is required"
+                    }
+                ]
             });
         }
 
         const jwtToken = await getJwt();
         if (!jwtToken) {
             return res.status(500).json({
-                status: "error",
-                message: "Failed to generate JWT token",
-                credits: "Starexx",
-                timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
+                "Error": [
+                    {
+                        "message": "Failed to generate JWT token"
+                    }
+                ]
             });
         }
 
@@ -147,78 +153,64 @@ app.get('/api/player-info', async (req, res) => {
             const jsonResult = getAvailableRoom(hexResponse);
             const parsedData = JSON.parse(jsonResult);
 
+            const playerData = {
+                basic_info: {
+                    name: parsedData["1"]["data"]["3"]["data"],
+                    id: playerId,
+                    likes: parsedData["1"]["data"]["21"]["data"],
+                    level: parsedData["1"]["data"]["6"]["data"],
+                    server: parsedData["1"]["data"]["5"]["data"],
+                    bio: parsedData["9"]["data"]["9"]["data"],
+                    booyah_pass_level: parsedData["1"]["data"]["18"]["data"],
+                    account_created: DateTime.fromSeconds(parsedData["1"]["data"]["44"]["data"]).toFormat("yyyy-MM-dd HH:mm:ss")
+                }
+            };
+
             try {
-                const playerData = {
-                    basic_info: {
-                        name: parsedData["1"]["data"]["3"]["data"],
-                        id: playerId,
-                        likes: parsedData["1"]["data"]["21"]["data"],
-                        level: parsedData["1"]["data"]["6"]["data"],
-                        server: parsedData["1"]["data"]["5"]["data"],
-                        bio: parsedData["9"]["data"]["9"]["data"],
-                        booyah_pass_level: parsedData["1"]["data"]["18"]["data"],
-                        account_created: DateTime.fromSeconds(parsedData["1"]["data"]["44"]["data"]).toFormat("yyyy-MM-dd HH:mm:ss")
+                playerData.animal = {
+                    name: parsedData["8"]["data"]["2"]["data"]
+                };
+            } catch {
+                playerData.animal = null;
+            }
+
+            try {
+                playerData.clan = {
+                    name: parsedData["6"]["data"]["2"]["data"],
+                    id: parsedData["6"]["data"]["1"]["data"],
+                    level: parsedData["6"]["data"]["4"]["data"],
+                    members_count: parsedData["6"]["data"]["6"]["data"],
+                    leader: {
+                        id: parsedData["6"]["data"]["3"]["data"],
+                        name: parsedData["7"]["data"]["3"]["data"],
+                        level: parsedData["7"]["data"]["6"]["data"],
+                        booyah_pass_level: parsedData["7"]["data"]["18"]["data"],
+                        likes: parsedData["7"]["data"]["21"]["data"],
+                        account_created: DateTime.fromSeconds(parsedData["7"]["data"]["44"]["data"]).toFormat("yyyy-MM-dd HH:mm:ss")
                     }
                 };
-
-                try {
-                    playerData.animal = {
-                        name: parsedData["8"]["data"]["2"]["data"]
-                    };
-                } catch {
-                    playerData.animal = null;
-                }
-
-                try {
-                    playerData.clan = {
-                        name: parsedData["6"]["data"]["2"]["data"],
-                        id: parsedData["6"]["data"]["1"]["data"],
-                        level: parsedData["6"]["data"]["4"]["data"],
-                        members_count: parsedData["6"]["data"]["6"]["data"],
-                        leader: {
-                            id: parsedData["6"]["data"]["3"]["data"],
-                            name: parsedData["7"]["data"]["3"]["data"],
-                            level: parsedData["7"]["data"]["6"]["data"],
-                            booyah_pass_level: parsedData["7"]["data"]["18"]["data"],
-                            likes: parsedData["7"]["data"]["21"]["data"],
-                            account_created: DateTime.fromSeconds(parsedData["7"]["data"]["44"]["data"]).toFormat("yyyy-MM-dd HH:mm:ss")
-                        }
-                    };
-                } catch {
-                    playerData.clan = null;
-                }
-
-                return res.json({
-                    status: "success",
-                    message: "Player information retrieved successfully",
-                    data: playerData,
-                    credits: "Starexx",
-                    timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
-                });
-
-            } catch (error) {
-                return res.status(500).json({
-                    status: "error",
-                    message: `Failed to parse player information: ${error.message}`,
-                    credits: "Starexx",
-                    timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
-                });
+            } catch {
+                playerData.clan = null;
             }
+
+            return res.json(playerData);
         }
 
         return res.status(response.status).json({
-            status: "error",
-            message: `API request failed with status code: ${response.status}`,
-            credits: "Starexx",
-            timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
+            "Error": [
+                {
+                    "message": `API request failed with status code: ${response.status}`
+                }
+            ]
         });
 
     } catch (error) {
         return res.status(500).json({
-            status: "error",
-            message: `An unexpected error occurred: ${error.message}`,
-            credits: "Starexx",
-            timestamp: DateTime.now().toFormat("yyyy-MM-dd HH:mm:ss")
+            "Error": [
+                {
+                    "message": `An unexpected error occurred: ${error.message}`
+                }
+            ]
         });
     }
 });

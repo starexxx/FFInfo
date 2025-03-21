@@ -12,25 +12,25 @@ def read_config():
     tree = ET.parse('config.xml')
     root = tree.getroot()
     config = {
-        'com_garena_msdk_uid': root.find('com_garena_msdk_uid').text,
-        'com_garena_msdk_password': root.find('com_garena_msdk_password').text,
-        'com_jwt_generate_url': root.find('com_jwt_generate_url').text
+        '1': root.find('1').text,
+        '2': root.find('2').text,
+        '3': root.find('3').text
     }
     return config
 
 config = read_config()
-com_garena_msdk_uid = config['com_garena_msdk_uid']
-com_garena_msdk_password = config['com_garena_msdk_password']
-com_jwt_generate_url = config['com_jwt_generate_url']
+1 = config['1']
+2 = config['2']
+3 = config['3']
 app = Flask(__name__)
 
 def get_jwt():
     try:
         params = {
-            'uid': com_garena_msdk_uid,
-            'password': com_garena_msdk_password
+            'uid': 1,
+            'password': 2
         }
-        response = requests.get(com_jwt_generate_url, params=params)
+        response = requests.get(3, params=params)
         if response.status_code == 200:
             jwt_data = response.json()
             return jwt_data.get("Starexx", [{}])[0].get("Token")

@@ -9,10 +9,6 @@ import json
 
 app = Flask(__name__)
 
-com_garena_msdk_uid = "3197059560"
-com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
-com_jwt_generate_url = "https://starexxlab-jwt.vercel.app/token"
-
 def get_jwt():
     try:
         params = {
@@ -143,15 +139,15 @@ def get_player_info():
 
             try:
                 player_data = {
-                    "basic_info": {
-                        "name": parsed_data["1"]["data"]["3"]["data"],
-                        "id": player_id,
-                        "likes": parsed_data["1"]["data"]["21"]["data"],
-                        "level": parsed_data["1"]["data"]["6"]["data"],
-                        "server": parsed_data["1"]["data"]["5"]["data"],
-                        "bio": parsed_data["9"]["data"]["9"]["data"],
-                        "booyah_pass_level": parsed_data["1"]["data"]["18"]["data"],
-                        "account_created": datetime.fromtimestamp(parsed_data["1"]["data"]["44"]["data"]).strftime("%Y-%m-%d %H:%M:%S")
+                    "Player": {
+                        "Name": parsed_data["1"]["data"]["3"]["data"],
+                        "UID": player_id,
+                        "Likes": parsed_data["1"]["data"]["21"]["data"],
+                        "Level": parsed_data["1"]["data"]["6"]["data"],
+                        "Region": parsed_data["1"]["data"]["5"]["data"],
+                        "Bio": parsed_data["9"]["data"]["9"]["data"],
+                        "BooyahPassLavel": parsed_data["1"]["data"]["18"]["data"],
+                        "AccountCreated": datetime.fromtimestamp(parsed_data["1"]["data"]["44"]["data"]).strftime("%Y-%m-%d %H:%M:%S")
                     }
                 }
 
@@ -164,17 +160,17 @@ def get_player_info():
 
                 try:
                     player_data["Guild"] = {
-                        "name": parsed_data["6"]["data"]["2"]["data"],
-                        "id": parsed_data["6"]["data"]["1"]["data"],
-                        "level": parsed_data["6"]["data"]["4"]["data"],
-                        "members_count": parsed_data["6"]["data"]["6"]["data"],
-                        "leader": {
-                            "id": parsed_data["6"]["data"]["3"]["data"],
-                            "name": parsed_data["7"]["data"]["3"]["data"],
-                            "level": parsed_data["7"]["data"]["6"]["data"],
-                            "booyah_pass_level": parsed_data["7"]["data"]["18"]["data"],
-                            "likes": parsed_data["7"]["data"]["21"]["data"],
-                            "account_created": datetime.fromtimestamp(parsed_data["7"]["data"]["44"]["data"]).strftime("%Y-%m-%d %H:%M:%S")
+                        "Name": parsed_data["6"]["data"]["2"]["data"],
+                        "ID": parsed_data["6"]["data"]["1"]["data"],
+                        "Level": parsed_data["6"]["data"]["4"]["data"],
+                        "Members": parsed_data["6"]["data"]["6"]["data"],
+                        "Leader": {
+                            "UID": parsed_data["6"]["data"]["3"]["data"],
+                            "Name": parsed_data["7"]["data"]["3"]["data"],
+                            "Level": parsed_data["7"]["data"]["6"]["data"],
+                            "BooyahPassLavel": parsed_data["7"]["data"]["18"]["data"],
+                            "Likes": parsed_data["7"]["data"]["21"]["data"],
+                            "AccountCreated": datetime.fromtimestamp(parsed_data["7"]["data"]["44"]["data"]).strftime("%Y-%m-%d %H:%M:%S")
                         }
                     }
                 except:
@@ -214,6 +210,12 @@ def get_player_info():
                 }
             ]
         }), 500
+        
+       
+com_garena_msdk_uid = "3197059560"
+com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
+com_jwt_generate_url = "https://starexxlab-jwt.vercel.app/token"
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

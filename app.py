@@ -152,11 +152,11 @@ def get_player_info():
                 }
 
                 try:
-                    player_data["animal"] = {
+                    player_data["Pet"] = {
                         "name": parsed_data["8"]["data"]["2"]["data"]
                     }
                 except:
-                    player_data["animal"] = None
+                    player_data["Pet"] = None
 
                 try:
                     player_data["Guild"] = {

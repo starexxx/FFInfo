@@ -9,8 +9,8 @@ import json
 import xml.etree.ElementTree as ET
 
 def read_config():
-    r = 'q.xml' 
-    tree = ET.parse(r)
+    tree = ET.parse('q.xml')
+    root = tree.getroot()
     config = {
         'a': root.find('a').text,
         'b': root.find('b').text,

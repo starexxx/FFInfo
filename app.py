@@ -86,22 +86,38 @@ def get_available_room(input_text):
     parsed_results_dict = parse_results(parsed_results)
     return json.dumps(parsed_results_dict)
 
+@app.route('/')
+def index():
+    return jsonify({
+        "FF Information": [
+            {
+                "credits": "Starexx"
+            }
+        ]
+    })
+
 @app.route('/info', methods=['GET'])
 def get_player_info():
     try:
         player_id = request.args.get('uid')
         if not player_id:
             return jsonify({
-    "Error": [
-        {
-            "message": "Player ID is required"
-        }
-    ]
-}), 400
+                "Error": [
+                    {
+                        "message": "Player ID is required"
+                    }
+                ]
+            }), 400
 
         jwt_token = get_jwt()
         if not jwt_token:
-            return jsonify({), 500
+            return jsonify({
+                "Error": [
+                    {
+                        "message": "Failed to fetch JWT token"
+                    }
+                ]
+            }), 500
 
         data = bytes.fromhex(encrypt_api(f"08{Encrypt_ID(player_id)}1007"))
         url = "https://client.ind.freefiremobile.com/GetPlayerPersonalShow"
@@ -164,22 +180,22 @@ def get_player_info():
                     player_data["Guild"] = None
 
                 return jsonify({
-                "Starexx": [
-                    {
-                    "Massage": "Player information retrieved successfully",
-                    "Data": player_data
-                     }
-                   ]
-                      })
+                    "Starexx": [
+                        {
+                            "Massage": "Player information retrieved successfully",
+                            "Data": player_data
+                        }
+                    ]
+                })
 
             except Exception as e:
                 return jsonify({
                     "Error": [
-                {
-                    "message": f"Failed to parse player information: {str(e)}"
-                }
-              ]
-           }), 500
+                        {
+                            "message": f"Failed to parse player information: {str(e)}"
+                        }
+                    ]
+                }), 500
 
         return jsonify({
             "Error": [
@@ -193,7 +209,7 @@ def get_player_info():
         return jsonify({
             "Error": [
                 {
-                    "message": f"An unexpected error occurred: {str(error)}"
+                    "message": f"An unexpected error occurred: {str(e)}"
                 }
             ]
         }), 500

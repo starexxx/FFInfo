@@ -12,25 +12,25 @@ def read_config():
     tree = ET.parse('config.xml')
     root = tree.getroot()
     config = {
-        '1': root.find('1').text,
-        '2': root.find('2').text,
-        '3': root.find('3').text
+        'a': root.find('a').text,
+        'b': root.find('b').text,
+        'c': root.find('c').text
     }
     return config
 
 config = read_config()
-1 = config['1']
-2 = config['2']
-3 = config['3']
+a = config['a']
+b = config['b']
+c = config['c']
 app = Flask(__name__)
 
 def get_jwt():
     try:
         params = {
-            'uid': 1,
-            'password': 2
+            'uid': a,
+            'password': b
         }
-        response = requests.get(3, params=params)
+        response = requests.get(c, params=params)
         if response.status_code == 200:
             jwt_data = response.json()
             return jwt_data.get("Starexx", [{}])[0].get("Token")

@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 com_garena_msdk_uid = "3197059560"
 com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
-com_jwt_ganerate_url = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token"
+com_jwt_generate_url = "https://starexxlab-jwt.vercel.app/token"
 
 def get_jwt():
     try:
@@ -19,12 +19,13 @@ def get_jwt():
             'uid': com_garena_msdk_uid,
             'password': com_garena_msdk_password
         }
-        response = requests.get(com_jwt_ganerate_url, params=params)
+        response = requests.get(com_jwt_generate_url, params=params)
         if response.status_code == 200:
             jwt_data = response.json()
-            return jwt_data.get("JWT TOKEN")
+            return jwt_data.get("Starexx", [{}])[0].get("Token")
         return None
     except Exception as e:
+        print(f"Error fetching JWT: {e}")
         return None
         
 def Encrypt_ID(x):

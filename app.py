@@ -9,19 +9,17 @@ import json
 
 app = Flask(__name__)
 
-# FF INFO ACC 
-DEFAULT_UID = "3197059560"
-DEFAULT_PASS = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
-JWT_GEN_URL = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token"
+com_garena_msdk_uid = "3197059560"
+com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
+com_jwt_ganerate_url = "https://ariflexlabs-jwt-gen.onrender.com/fetch-token"
 
-# GET JWT
 def get_jwt():
     try:
         params = {
-            'uid': DEFAULT_UID,
-            'password': DEFAULT_PASS
+            'uid': com_garena_msdk_uid,
+            'password': com_garena_msdk_password
         }
-        response = requests.get(JWT_GEN_URL, params=params)
+        response = requests.get(com_jwt_ganerate_url, params=params)
         if response.status_code == 200:
             jwt_data = response.json()
             return jwt_data.get("JWT TOKEN")
@@ -29,7 +27,6 @@ def get_jwt():
     except Exception as e:
         return None
         
-#DONT EDIT
 def Encrypt_ID(x):
     x = int(x)
     dec = ['80', '81', '82', '83', '84', '85', '86', '87', '88', '89', '8a', '8b', '8c', '8d', '8e', '8f', '90', '91', '92', '93', '94', '95', '96', '97', '98', '99', '9a', '9b', '9c', '9d', '9e', '9f', 'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8', 'a9', 'aa', 'ab', 'ac', 'ad', 'ae', 'af', 'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'ba', 'bb', 'bc', 'bd', 'be', 'bf', 'c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8', 'c9', 'ca', 'cb', 'cc', 'cd', 'ce', 'cf', 'd0', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'da', 'db', 'dc', 'dd', 'de', 'df', 'e0', 'e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8', 'e9', 'ea', 'eb', 'ec', 'ed', 'ee', 'ef', 'f0', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'fa', 'fb', 'fc', 'fd', 'fe', 'ff']
@@ -89,26 +86,22 @@ def get_available_room(input_text):
     parsed_results_dict = parse_results(parsed_results)
     return json.dumps(parsed_results_dict)
 
-@app.route('/api/player-info', methods=['GET'])
+@app.route('/info', methods=['GET'])
 def get_player_info():
     try:
-        player_id = request.args.get('id')
+        player_id = request.args.get('uid')
         if not player_id:
             return jsonify({
-                "status": "error",
-                "message": "Player ID is required",
-                "credits": "TEAM-AKIRU",
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }), 400
+    "Error": [
+        {
+            "message": "Player ID is required"
+        }
+    ]
+}), 400
 
         jwt_token = get_jwt()
         if not jwt_token:
-            return jsonify({
-                "status": "error",
-                "message": "Failed to generate JWT token",
-                "credits": "TEAM-AKIRU",
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            }), 500
+            return jsonify({), 500
 
         data = bytes.fromhex(encrypt_api(f"08{Encrypt_ID(player_id)}1007"))
         url = "https://client.ind.freefiremobile.com/GetPlayerPersonalShow"
@@ -123,8 +116,7 @@ def get_player_info():
             'Host': 'clientbp.ggblueshark.com',
             'Connection': 'Keep-Alive',
             'Accept-Encoding': 'gzip'
-        } # CHANGE THIS API DEPENDING ON WHICH REGIONS YOU WANT IT TO WORK. 
-
+        }
         response = requests.post(url, headers=headers, data=data, verify=False)
 
         if response.status_code == 200:
@@ -172,34 +164,38 @@ def get_player_info():
                     player_data["Guild"] = None
 
                 return jsonify({
-                    "status": "success",
-                    "message": "Player information retrieved successfully",
-                    "data": player_data,
-                    "credits": "TEAM-AKIRU",
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                })
+                "Starexx": [
+                    {
+                    "Massage": "Player information retrieved successfully",
+                    "Data": player_data
+                     }
+                   ]
+                      })
 
             except Exception as e:
                 return jsonify({
-                    "status": "error",
-                    "message": f"Failed to parse player information: {str(e)}",
-                    "credits": "TEAM-AKIRU",
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                }), 500
+                    "Error": [
+                {
+                    "message": f"Failed to parse player information: {str(e)}"
+                }
+              ]
+           }), 500
 
         return jsonify({
-            "status": "error",
-            "message": f"API request failed with status code: {response.status_code}",
-            "credits": "TEAM-AKIRU",
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            "Error": [
+                {
+                    "message": f"API request failed with status code: {response.status_code}"
+                }
+            ]
         }), response.status_code
 
     except Exception as e:
         return jsonify({
-            "status": "error",
-            "message": f"An unexpected error occurred: {str(e)}",
-            "credits": "TEAM-AKIRU",
-            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            "Error": [
+                {
+                    "message": f"An unexpected error occurred: {str(error)}"
+                }
+            ]
         }), 500
 
 if __name__ == '__main__':

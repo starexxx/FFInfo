@@ -6,7 +6,22 @@ from Crypto.Util.Padding import pad, unpad
 from protobuf_decoder.protobuf_decoder import Parser
 from datetime import datetime
 import json
+import xml.etree.ElementTree as ET
 
+def read_config():
+    tree = ET.parse('config.xml')
+    root = tree.getroot()
+    config = {
+        'com_garena_msdk_uid': root.find('com_garena_msdk_uid').text,
+        'com_garena_msdk_password': root.find('com_garena_msdk_password').text,
+        'com_jwt_generate_url': root.find('com_jwt_generate_url').text
+    }
+    return config
+
+config = read_config()
+com_garena_msdk_uid = config['com_garena_msdk_uid']
+com_garena_msdk_password = config['com_garena_msdk_password']
+com_jwt_generate_url = config['com_jwt_generate_url']
 app = Flask(__name__)
 
 def get_jwt():
@@ -210,12 +225,7 @@ def get_player_info():
                 }
             ]
         }), 500
-        
-       
-com_garena_msdk_uid = "3197059560"
-com_garena_msdk_password = "3EC146CD4EEF7A640F2967B06D7F4413BD4FB37382E0ED260E214E8BACD96734"
-com_jwt_generate_url = "https://starexxlab-jwt.vercel.app/token"
-
+    
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -2,20 +2,19 @@ const express = require('express');
 const axios = require('axios');
 const crypto = require('crypto');
 const xml2js = require('xml2js');
-const bodyParser = require('body-parser');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
-app.use(bodyParser.json());
 
-const parser = new xml2js.Parser({
-    explicitArray: false
-});
+const parser = new xml2js.Parser({ explicitArray: false });
 
 function readConfig() {
-    const fs = require('fs');
-    const xml = fs.readFileSync('q.xml');
+    const filePath = path.join(__dirname, '../q.xml');
+    const xml = fs.readFileSync(filePath, 'utf8');
     let config;
     parser.parseString(xml, (err, result) => {
+        if (err) throw err;
         config = result.config;
     });
     return config;
@@ -25,7 +24,6 @@ const config = readConfig();
 const a = config.a;
 const b = config.b;
 const c = config.c;
-
 async function getJwt() {
     try {
         const response = await axios.get(c, {
